@@ -1,80 +1,136 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  static const String _title = 'Flutter Code Sample';
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: _title,
-      home: MyStatefulWidget(),
+      home: HomePage(),
     );
   }
 }
 
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-  ];
+class _HomePageState extends State<HomePage> {
+  final TextEditingController _nrSchimb = TextEditingController();
+  String _raspuns = "";
+  int ok = 0;
 
-  void _onItemTapped(int index) {
+  void _verif() {
     setState(() {
-      _selectedIndex = index;
+      for (int i = 0; i <= int.parse(_nrSchimb.text); i++) {
+        int cube = i * i * i;
+        if (cube == double.parse(_nrSchimb.text).toInt()) {
+          ok = 1;
+        }
+      }
+      if ((sqrt(double.parse(_nrSchimb.text)).toInt()) ==
+              sqrt(double.parse(_nrSchimb.text)) &&
+          ok == 1) {
+        _raspuns = "Ambele";
+      } else if ((sqrt(double.parse(_nrSchimb.text)).toInt()) ==
+          sqrt(double.parse(_nrSchimb.text))) {
+        _raspuns = "Este Patrat Perfect";
+      } else if (ok == 1) {
+        _raspuns = "Este cub Perfect";
+      } else {
+        _raspuns = "Nu este nici Patrat nici Cub Perfect";
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('BottomNavigationBar Sample'),
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          title: const Center(
+            child: Text("Patrat sau Cub"),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
+        ),
+        body: Form(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.all(5.0),
+                  decoration:
+                      BoxDecoration(border: Border.all(color: Colors.black26)),
+                  child: const Text(
+                    'Tasteaza un numar pentru a vedea daca este Patrat perfect sau Cub Perfect',
+                    style: TextStyle(fontSize: 22.0, color: Colors.black),
+                  ),
+                ),
+                TextField(
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: false),
+                  controller: _nrSchimb,
+                  decoration: const InputDecoration(
+                      label: Text.rich(
+                        TextSpan(
+                          children: <InlineSpan>[
+                            WidgetSpan(
+                              child: Text(
+                                'Tasteaza DOAR NUMERE',
+                              ),
+                            ),
+                            WidgetSpan(
+                              child: Text(
+                                '*',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      border: OutlineInputBorder(),
+                      hintText: 'Tasteaza Numarul'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _verif();
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(_nrSchimb.text),
+                        content: Text(_raspuns),
+                        actions: <Widget>[
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Ok'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Reincearca",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'School',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
+        ),
       ),
     );
   }
